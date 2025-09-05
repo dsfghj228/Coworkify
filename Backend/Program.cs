@@ -12,7 +12,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+    .WriteTo.Console()
+    .CreateLogger();
+
+Log.Information("Запуск приложения");
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

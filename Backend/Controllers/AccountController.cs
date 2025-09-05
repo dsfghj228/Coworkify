@@ -4,20 +4,15 @@ using Backend.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Backend.Controllers;
 
 [Route("coworkify/account")]
 [ApiController]
-public class AccountController : ControllerBase
+public class AccountController(IMediator mediator, ILogger<AccountController> logger) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    
-    public AccountController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterAppUser registerModel)
     {
@@ -28,7 +23,11 @@ public class AccountController : ControllerBase
             Password = registerModel.Password
         };
         
-        var result =  await _mediator.Send(newUser);
+        var result =  await mediator.Send(newUser);
+        logger.LogInformation(
+            "Успешное создание пользователя: {@UserResult}", 
+            new { result.Id, result.UserName, result.Email }
+        );
         return Ok(result);
     }
 }

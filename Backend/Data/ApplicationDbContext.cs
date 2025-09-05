@@ -4,10 +4,5 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data;
 
-public class ApplicationDbContext : IdentityDbContext<AppUser>
-{
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext) : base(dbContext)
-    {
-        
-    }
-}
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext)
+    : IdentityDbContext<AppUser>(dbContext);
