@@ -54,6 +54,22 @@ builder.Services.AddProblemDetails(options =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    options.Map<CustomExceptions.UnauthorizedPasswordException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.UnauthorizedUsernameException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 
 });
 

@@ -3,6 +3,7 @@ using Backend.Interfaces;
 using Backend.MediatR.Commands.Account;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
@@ -15,5 +16,21 @@ public class AccountService(UserManager<AppUser> userManager) : IAccountService
         {
             throw new CustomExceptions.UserAlreadyExistsException();
         }
+    }
+
+    public async Task<AppUser> CheckLoginUser(LoginUserCommand request)
+    {
+        var user = await userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
+        if (user == null)
+        {
+            throw new CustomExceptions.UnauthorizedUsernameException();
+        }
+
+        if (!await userManager.CheckPasswordAsync(user, request.Password))
+        {
+            throw new CustomExceptions.UnauthorizedPasswordException();
+        }
+
+        return user;
     }
 }

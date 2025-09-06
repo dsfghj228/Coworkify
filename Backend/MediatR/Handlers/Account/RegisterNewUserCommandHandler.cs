@@ -29,8 +29,10 @@ public class RegisterNewUserCommandHandler(UserManager<AppUser> userManager, IAc
                 Email = appUser.Email,
                 Token = tokenService.CreateToken(appUser)
             };
+        }else
+        {
+            var errors = string.Join(", ", createdUser.Errors.Select(e => e.Description));
+            throw new CustomExceptions.InternalServerErrorException(errors);
         }
-
-        throw new CustomExceptions.InternalServerErrorException();
     }
 }

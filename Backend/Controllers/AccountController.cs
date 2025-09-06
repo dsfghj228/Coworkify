@@ -26,4 +26,19 @@ public class AccountController(IMediator mediator, ILogger<AccountController> lo
         );
         return Ok(result);
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginAppUser loginModel)
+    {
+        var loginUser = new LoginUserCommand
+        {
+            Username = loginModel.Username,
+            Password = loginModel.Password
+        };
+        
+        var result =  await mediator.Send(loginUser);
+        logger.LogInformation("Успешный вход в учетную запись: {@UserResult}",
+            new {result.UserName, result.Email });
+        return Ok(result);
+    }
 }
