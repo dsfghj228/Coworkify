@@ -1,36 +1,36 @@
+using Backend.Dto.AccountDto;
 using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.MediatR.Commands.Account;
 using Backend.Models;
-using Backend.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.MediatR.Handlers.Account;
 
-public class RegisterNewUserCommandHandler(UserManager<AppUser> userManager, AccountService accountService)
-    : IRequestHandler<RegisterNewUserCommand, AppUser>
+public class RegisterNewUserCommandHandler(UserManager<AppUser> userManager, IAccountService accountService, ITokenService tokenService)
+    : IRequestHandler<RegisterNewUserCommand, ReturnAppUser>
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
-    private readonly IAccountService _accountService = accountService;
-
-    public async Task<AppUser> Handle(RegisterNewUserCommand request, CancellationToken cancellationToken)
+    public async Task<ReturnAppUser> Handle(RegisterNewUserCommand request, CancellationToken cancellationToken)
     {
-        await _accountService.CheckNewUser(request);
+        await accountService.CheckNewUser(request);
 
         var appUser = new AppUser
         {
             UserName = request.Username,
             Email = request.Email
         };
-        var createdUser = await _userManager.CreateAsync(appUser, request.Password);
+        var createdUser = await userManager.CreateAsync(appUser, request.Password);
         if (createdUser.Succeeded)
         {
-            return appUser;
+            return new ReturnAppUser
+            {
+                UserName = appUser.UserName,
+                Email = appUser.Email,
+                Token = tokenService.CreateToken(appUser)
+            };
         }
-        else
-        {
-            throw new CustomExceptions.InternalServerErrorException();
-        }
+
+        throw new CustomExceptions.InternalServerErrorException();
     }
 }

@@ -8,11 +8,9 @@ namespace Backend.Services;
 
 public class AccountService(UserManager<AppUser> userManager) : IAccountService
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
-
     public async Task CheckNewUser(RegisterNewUserCommand request)
     {
-        var existingUser = await _userManager.FindByNameAsync(request.Username);
+        var existingUser = await userManager.FindByNameAsync(request.Username);
         if (existingUser != null)
         {
             throw new CustomExceptions.UserAlreadyExistsException();

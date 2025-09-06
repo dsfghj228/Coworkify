@@ -1,11 +1,7 @@
 using Backend.Dto.AccountDto;
 using Backend.MediatR.Commands.Account;
-using Backend.Models;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Backend.Controllers;
 
@@ -26,7 +22,7 @@ public class AccountController(IMediator mediator, ILogger<AccountController> lo
         var result =  await mediator.Send(newUser);
         logger.LogInformation(
             "Успешное создание пользователя: {@UserResult}", 
-            new { result.Id, result.UserName, result.Email }
+            new {result.UserName, result.Email }
         );
         return Ok(result);
     }

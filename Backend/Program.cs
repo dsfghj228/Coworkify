@@ -1,6 +1,7 @@
 using Backend.Data;
 using Backend.Exceptions;
 using Backend.FluentValidation;
+using Backend.Interfaces;
 using Backend.Models;
 using Backend.Services;
 using FluentValidation;
@@ -28,7 +29,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddProblemDetails(options =>
 {
-    options.IncludeExceptionDetails = (ctx, ex) => false;
+    options.IncludeExceptionDetails = (_, _) => false;
 
     options.Map<CustomExceptions.InternalServerErrorException>(ex => new ProblemDetails
     {
@@ -76,7 +77,7 @@ builder.Services.AddAuthentication(options => {
                     options.DefaultSignInScheme =
                         options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options => {
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidIssuer = builder.Configuration["JWT:Issuer"],
@@ -101,7 +102,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 });
 
-builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
