@@ -43,4 +43,9 @@ public abstract class CustomExceptions : Exception
         "https://tools.ietf.org/html/rfc7231#section-6.6.1",
         "Ошибка авторизации",
         "При попытке авторизации произошла ошибка. Неверный пароль");
+    
+    public class UnauthorizedException() : CustomExceptions(HttpStatusCode.Unauthorized,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Ошибка авторизации",
+        "При попытке авторизации произошла ошибка.");
 }
