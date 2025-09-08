@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Backend.Dto.WorkspaceDto;
 using Backend.Exceptions;
 using Backend.MediatR.Commands.Workspace;
+using Backend.MediatR.Queries.Workspace;
 using Backend.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,15 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
         
         var result = await mediator.Send(newWorkspace);
         logger.LogInformation("Успешное создание workspace");
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAllWorkspaces()
+    {
+        var query = new GetAllWorkspacesQuery();
+        var result = await mediator.Send(query);
+        logger.LogInformation("Успешное получение всех workspaces");
         return Ok(result);
     }
 }
