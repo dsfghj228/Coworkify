@@ -15,6 +15,7 @@ public class GetAllWorkspacesQueryHandler(IWorkspaceRepository workspaceReposito
         {
             var returnWorkspace = new ReturnWorkspace
             {
+                Id = workspace.Id,
                 Name = workspace.Name,
                 Address = workspace.Address,
                 Description = workspace.Description,

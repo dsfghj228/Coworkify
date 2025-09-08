@@ -24,6 +24,7 @@ public class CreateWorkspaceCommandHandler(IWorkspaceRepository workspaceReposit
 
         var workspaceForReturn = new ReturnWorkspace
         {
+            Id = workspace.Id,
             Address = workspace.Address,
             Name = workspace.Name,
             Description = workspace.Description,
