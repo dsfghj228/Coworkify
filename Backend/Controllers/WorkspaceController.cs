@@ -47,4 +47,16 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
         logger.LogInformation("Успешное получение всех workspaces");
         return Ok(result);
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetWorkspaceById([FromRoute] Guid id)
+    {
+        var query = new GetWorkspaceByIdQuery
+        {
+            Id = id
+        };
+        var result = await mediator.Send(query);
+        logger.LogInformation("Workspace c id {Guid} успешно найден", id);
+        return Ok(result);
+    }
 }

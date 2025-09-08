@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,5 +18,15 @@ public class WorkspaceRepository(ApplicationDbContext context) : IWorkspaceRepos
     public async Task<List<Workspace>> GetAllWorkspaces()
     {
         return await context.Workspaces.Include(w => w.Rooms).ToListAsync();
+    }
+
+    public async Task<Workspace> GetWorkspaceById(Guid id)
+    {
+        var workspaces = await context.Workspaces.Include(w => w.Rooms).FirstOrDefaultAsync(w => w.Id == id);
+        if (workspaces == null)
+        {
+            throw new CustomExceptions.WorkspaceNotFoundException(id);
+        }
+        return workspaces;
     }
 }
