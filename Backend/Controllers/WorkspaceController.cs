@@ -56,7 +56,20 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
             Id = id
         };
         var result = await mediator.Send(query);
-        logger.LogInformation("Workspace c id {Guid} успешно найден", id);
+        logger.LogInformation("Workspace c id {Id} успешно найден", id);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteWorkspace([FromRoute] Guid id)
+    {
+        var command = new DeleteWorkspaceCommand
+        {
+            Id = id
+        };
+        var result = await mediator.Send(command);
+        logger.LogInformation("Успешное удаление workspace c Id: {Id}", id);
         return Ok(result);
     }
 }

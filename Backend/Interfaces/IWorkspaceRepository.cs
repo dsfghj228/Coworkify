@@ -7,4 +7,5 @@ public interface IWorkspaceRepository
     Task CreateWorkspace(Workspace workspace);
     Task<List<Workspace>> GetAllWorkspaces();
     Task<Workspace> GetWorkspaceById(Guid id);
+    Task<Workspace> DeleteWorkspace(Guid id);
 }

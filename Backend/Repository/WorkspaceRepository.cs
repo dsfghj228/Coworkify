@@ -17,16 +17,36 @@ public class WorkspaceRepository(ApplicationDbContext context) : IWorkspaceRepos
 
     public async Task<List<Workspace>> GetAllWorkspaces()
     {
-        return await context.Workspaces.Include(w => w.Rooms).ToListAsync();
+        return await context.Workspaces
+            .Include(w => w.Rooms)
+            .ToListAsync();
     }
 
     public async Task<Workspace> GetWorkspaceById(Guid id)
     {
-        var workspaces = await context.Workspaces.Include(w => w.Rooms).FirstOrDefaultAsync(w => w.Id == id);
+        var workspaces = await context.Workspaces
+            .Include(w => w.Rooms)
+            .FirstOrDefaultAsync(w => w.Id == id);
         if (workspaces == null)
         {
             throw new CustomExceptions.WorkspaceNotFoundException(id);
         }
         return workspaces;
+    }
+
+    public async Task<Workspace> DeleteWorkspace(Guid id)
+    {
+        var workspace = await context.Workspaces
+            .Include(w => w.Rooms)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        if (workspace == null)
+        {
+            throw new CustomExceptions.WorkspaceNotFoundException(id);
+        }
+
+        context.Remove(workspace);
+        await context.SaveChangesAsync();
+        return workspace;
     }
 }
