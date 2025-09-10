@@ -1,5 +1,6 @@
 using Backend.Dto.RoomDto;
 using Backend.MediatR.Commands.Room;
+using Backend.MediatR.Queries.Room;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,19 @@ public class RoomController(IMediator mediator, ILogger<RoomController> logger) 
         };
         var result = await mediator.Send(command);
         logger.LogInformation("Успешное создание комнаты");
+        return Ok(result);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetRoomById([FromRoute] Guid id)
+    {
+        var query = new GetRoomByIdQuery
+        {
+            Id = id
+        };
+        
+        var result = await mediator.Send(query);
+        logger.LogInformation("Успешное получение комнаты с id: {@Id}", id);
         return Ok(result);
     }
 }

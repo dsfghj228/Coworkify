@@ -18,7 +18,6 @@ public class CreateRoomCommandHandler(IRoomRepository roomRepository) : IRequest
             Capacity = room.Capacity,
             HourlyRate = room.HourlyRate,
             WorkspaceId = room.WorkspaceId,
-            Bookings = room.Bookings
         };
         return roomForReturn;
     }

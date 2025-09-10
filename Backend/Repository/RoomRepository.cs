@@ -34,4 +34,15 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRepository
         await context.SaveChangesAsync();
         return room;
     }
+
+    public async Task<Room> GetRoomById(Guid id)
+    {
+        var room = await context.Rooms.FirstOrDefaultAsync(w => w.Id == id);
+        if (room == null)
+        {
+            throw new CustomExceptions.RoomNotFoundException(id);
+        }
+        
+        return room;
+    }
 }

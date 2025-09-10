@@ -6,4 +6,5 @@ namespace Backend.Interfaces;
 public interface IRoomRepository
 {
     Task<Room> CreateRoom(CreateRoomCommand request);
+    Task<Room> GetRoomById(Guid id);
 }

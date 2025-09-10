@@ -21,7 +21,6 @@ public class DeleteWorkspaceCommandHandler(IWorkspaceRepository workspaceReposit
                 Name = room.Name,
                 Capacity = room.Capacity,
                 HourlyRate = room.HourlyRate,
-                Bookings = room.Bookings,
                 WorkspaceId = room.WorkspaceId
             };
             roomsForReturn.Add(roomForReturn);

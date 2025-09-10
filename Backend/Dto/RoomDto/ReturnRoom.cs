@@ -10,5 +10,4 @@ public class ReturnRoom
     public int Capacity { get; set; }
     public double HourlyRate { get; set; }
     public Guid WorkspaceId { get; set; }
-    public List<Booking> Bookings { get; set; }
 }
