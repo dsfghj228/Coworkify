@@ -177,8 +177,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ValidationExceptionMiddleware>();
 app.UseProblemDetails();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
 
