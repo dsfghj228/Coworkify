@@ -51,4 +51,17 @@ public class RoomController(IMediator mediator, ILogger<RoomController> logger) 
         logger.LogInformation("Успешное получение всех комнат для workspace c Id: {@Id} ", workspaceId);
         return Ok(result);
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteRoom([FromRoute] Guid id)
+    {
+        var command = new DeleteRoomCommand
+        {
+            Id = id
+        };
+        var result = await mediator.Send(command);
+        logger.LogInformation("Успешное удаление комнаты с Id: {@Id}", id);
+        return Ok(result);
+    }
 }

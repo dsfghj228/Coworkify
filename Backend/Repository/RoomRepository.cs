@@ -52,4 +52,16 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRepository
             .Where(r => r.WorkspaceId == workspaceId)
             .ToListAsync();
     }
+
+    public async Task<Room> DeleteRoom(Guid id)
+    {
+        var room = await context.Rooms.FirstOrDefaultAsync(w => w.Id == id);
+        if (room == null)
+        {
+            throw new CustomExceptions.RoomNotFoundException(id);
+        }
+        context.Rooms.Remove(room);
+        await context.SaveChangesAsync();
+        return room;
+    }
 }
