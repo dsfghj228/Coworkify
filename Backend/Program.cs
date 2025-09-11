@@ -87,6 +87,14 @@ builder.Services.AddProblemDetails(options =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    options.Map<CustomExceptions.RoomNotFoundException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 
 });
 
@@ -162,6 +170,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 var app = builder.Build();
 
@@ -176,8 +185,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ValidationExceptionMiddleware>();
 app.UseProblemDetails();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
 

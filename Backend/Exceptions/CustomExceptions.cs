@@ -53,4 +53,9 @@ public abstract class CustomExceptions : Exception
         "https://tools.ietf.org/html/rfc7231#section-6.6.1",
         "Не найдено",
         $"Workspace с id @{id} не найдено");
+    
+    public class RoomNotFoundException(Guid id) : CustomExceptions(HttpStatusCode.NotFound,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Не найдено",
+        $"Room с id @{id} не найдено");
 }

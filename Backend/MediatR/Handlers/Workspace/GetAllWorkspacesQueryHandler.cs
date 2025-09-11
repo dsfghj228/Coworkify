@@ -1,3 +1,4 @@
+using Backend.Dto.RoomDto;
 using Backend.Dto.WorkspaceDto;
 using Backend.Interfaces;
 using Backend.MediatR.Queries.Workspace;
@@ -13,13 +14,28 @@ public class GetAllWorkspacesQueryHandler(IWorkspaceRepository workspaceReposito
         var returnWorkspaces = new List<ReturnWorkspace>();
         foreach (var workspace in workspaces)
         {
+            var roomsForReturn = new List<ReturnRoom>();
+
+            foreach (var room in workspace.Rooms)
+            {
+                var roomForReturn = new ReturnRoom
+                {
+                    Id = room.Id,
+                    Name = room.Name,
+                    Capacity = room.Capacity,
+                    HourlyRate = room.HourlyRate,
+                    WorkspaceId = room.WorkspaceId
+                };
+                roomsForReturn.Add(roomForReturn);
+            }
+            
             var returnWorkspace = new ReturnWorkspace
             {
                 Id = workspace.Id,
                 Name = workspace.Name,
                 Address = workspace.Address,
                 Description = workspace.Description,
-                Rooms = workspace.Rooms
+                Rooms = roomsForReturn
             };
             returnWorkspaces.Add(returnWorkspace);
         }

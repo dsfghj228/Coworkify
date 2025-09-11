@@ -1,7 +1,7 @@
+using Backend.Dto.RoomDto;
 using Backend.Dto.WorkspaceDto;
 using Backend.Interfaces;
 using Backend.MediatR.Commands.Workspace;
-using Backend.Models;
 using MediatR;
 
 namespace Backend.MediatR.Handlers.Workspace;
@@ -17,10 +17,25 @@ public class CreateWorkspaceCommandHandler(IWorkspaceRepository workspaceReposit
             Address = request.Address,
             OwnerId = request.Owner.Id,
             Owner = request.Owner,
-            Rooms = new List<Room>()
+            Rooms = new List<Models.Room>()
         };
         
         await workspaceRepository.CreateWorkspace(workspace);
+        
+        var roomsForReturn = new List<ReturnRoom>();
+
+        foreach (var room in workspace.Rooms)
+        {
+            var roomForReturn = new ReturnRoom
+            {
+                Id = room.Id,
+                Name = room.Name,
+                Capacity = room.Capacity,
+                HourlyRate = room.HourlyRate,
+                WorkspaceId = room.WorkspaceId
+            };
+            roomsForReturn.Add(roomForReturn);
+        }
 
         var workspaceForReturn = new ReturnWorkspace
         {
@@ -28,7 +43,7 @@ public class CreateWorkspaceCommandHandler(IWorkspaceRepository workspaceReposit
             Address = workspace.Address,
             Name = workspace.Name,
             Description = workspace.Description,
-            Rooms = workspace.Rooms
+            Rooms = roomsForReturn
         };
         
         return workspaceForReturn;
