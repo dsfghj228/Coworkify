@@ -3,6 +3,7 @@ using Backend.Exceptions;
 using Backend.FluentValidation;
 using Backend.Interfaces;
 using Backend.Models;
+using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
 using MediatR;
@@ -64,6 +65,30 @@ builder.Services.AddProblemDetails(options =>
     });
     
     options.Map<CustomExceptions.UnauthorizedUsernameException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.UnauthorizedException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.WorkspaceNotFoundException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.RoomNotFoundException>(ex => new ProblemDetails
     {
         Type = ex.Type,
         Title = ex.Title,
@@ -144,6 +169,8 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 var app = builder.Build();
 
@@ -158,8 +185,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ValidationExceptionMiddleware>();
 app.UseProblemDetails();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
 

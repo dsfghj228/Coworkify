@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.MediatR.Commands.Account;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Backend.Services;
 

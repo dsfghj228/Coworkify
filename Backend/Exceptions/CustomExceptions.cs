@@ -43,4 +43,19 @@ public abstract class CustomExceptions : Exception
         "https://tools.ietf.org/html/rfc7231#section-6.6.1",
         "Ошибка авторизации",
         "При попытке авторизации произошла ошибка. Неверный пароль");
+    
+    public class UnauthorizedException() : CustomExceptions(HttpStatusCode.Unauthorized,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Ошибка авторизации",
+        "При попытке авторизации произошла ошибка.");
+    
+    public class WorkspaceNotFoundException(Guid id) : CustomExceptions(HttpStatusCode.NotFound,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Не найдено",
+        $"Workspace с id @{id} не найдено");
+    
+    public class RoomNotFoundException(Guid id) : CustomExceptions(HttpStatusCode.NotFound,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Не найдено",
+        $"Room с id @{id} не найдено");
 }
