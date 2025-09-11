@@ -39,4 +39,16 @@ public class RoomController(IMediator mediator, ILogger<RoomController> logger) 
         logger.LogInformation("Успешное получение комнаты с id: {@Id}", id);
         return Ok(result);
     }
+
+    [HttpGet("workspaces/{workspaceId}")]
+    public async Task<IActionResult> GetRoomsByWorkspaceId([FromRoute] Guid workspaceId)
+    {
+        var query = new GetAllRoomsQuery()
+        {
+            WorkspaceId = workspaceId
+        };
+        var result = await mediator.Send(query);
+        logger.LogInformation("Успешное получение всех комнат для workspace c Id: {@Id} ", workspaceId);
+        return Ok(result);
+    }
 }

@@ -45,4 +45,11 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRepository
         
         return room;
     }
+
+    public async Task<List<Room>> GetAllRooms(Guid workspaceId)
+    {
+        return await context.Rooms
+            .Where(r => r.WorkspaceId == workspaceId)
+            .ToListAsync();
+    }
 }
