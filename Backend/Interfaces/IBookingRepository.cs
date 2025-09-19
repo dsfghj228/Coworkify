@@ -7,4 +7,5 @@ public interface IBookingRepository
 {
     Task<Booking> CreateBooking(BookRoomCommand command);
     Task<Booking> CancelBooking(Guid id);
+    Task<List<Booking>> GetUserBookings(string UserId);
 }

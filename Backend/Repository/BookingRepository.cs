@@ -61,4 +61,14 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
         await context.SaveChangesAsync();
         return booking;
     }
+
+    public async Task<List<Booking>> GetUserBookings(string UserId)
+    {
+        var bookings = await context.Bookings
+            .Where(b => b.UserId == UserId)
+            .Include(b => b.User)
+            .ToListAsync();
+
+        return bookings;
+    }
 }

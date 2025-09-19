@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Backend.Dto.BookingDto;
 using Backend.Exceptions;
 using Backend.MediatR.Commands.Booking;
+using Backend.MediatR.Queries.Booking;
 using Backend.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,26 @@ public class BookingController(UserManager<AppUser> userManager, IMediator media
         };
         var result = await mediator.Send(command);
         logger.LogInformation("Успешная отмена брони с id: {@Id}", id);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetUserBookings()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            throw new CustomExceptions.UnauthorizedException();
+        }
+
+        var query = new GetUserBookingsQuery
+        {
+            UserId = userId
+        };
+        
+        var result = await mediator.Send(query);
+        logger.LogInformation("Успешное получение всех бронирований пользователя с Id: {@Id}", userId);
         return Ok(result);
     }
 }
