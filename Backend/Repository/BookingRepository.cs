@@ -38,4 +38,27 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
         await context.SaveChangesAsync();
         return booking;
     }
+
+    public async Task<Booking> CancelBooking(Guid id)
+    {
+        var booking = await context.Bookings
+            .Where(b => b.Id == id)
+            .Include(b => b.User)
+            .FirstOrDefaultAsync();
+
+        if (booking == null)
+        {
+            throw new CustomExceptions.BookingNotFoundException(id);
+        }
+
+        if (booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Completed)
+        {
+            throw new CustomExceptions.BookingCanNotBeCancelledException(id, booking.Status);
+        }
+
+        booking.Status = BookingStatus.Cancelled;
+        context.Bookings.Update(booking);
+        await context.SaveChangesAsync();
+        return booking;
+    }
 }

@@ -38,4 +38,17 @@ public class BookingController(UserManager<AppUser> userManager, IMediator media
         logger.LogInformation("Успешное бронирование комнаты с Id {@Id} на период с {@StartDate} по {@EndDate}", userId, newBooking.StartDate, newBooking.EndDate);
         return Ok(result);
     }
+
+    [HttpPut("cancel/{id}")]
+    [Authorize]
+    public async Task<IActionResult> CancelBooking([FromRoute] Guid id)
+    {
+        var command = new CancelBookingCommand
+        {
+            Id = id
+        };
+        var result = await mediator.Send(command);
+        logger.LogInformation("Успешная отмена брони с id: {@Id}", id);
+        return Ok(result);
+    }
 }

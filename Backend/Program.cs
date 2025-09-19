@@ -100,6 +100,21 @@ builder.Services.AddProblemDetails(options =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    options.Map<CustomExceptions.BookingNotFoundException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    options.Map<CustomExceptions.BookingCanNotBeCancelledException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 
 });
 

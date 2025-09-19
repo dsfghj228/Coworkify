@@ -1,4 +1,5 @@
 using System.Net;
+using Backend.Enums;
 
 namespace Backend.Exceptions;
 
@@ -58,4 +59,14 @@ public abstract class CustomExceptions : Exception
         "https://tools.ietf.org/html/rfc7231#section-6.6.1",
         "Не найдено",
         $"Room с id @{id} не найдено");
+    
+    public class BookingNotFoundException(Guid id) : CustomExceptions(HttpStatusCode.NotFound,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Не найдено",
+        $"Booking с id @{id} не найден");
+    
+    public class BookingCanNotBeCancelledException(Guid id, BookingStatus status) : CustomExceptions(HttpStatusCode.Conflict,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Booking не может быть отменен",
+        $"Booking с id @{id} не может быть отменен так как его статус: @{status}");
 }

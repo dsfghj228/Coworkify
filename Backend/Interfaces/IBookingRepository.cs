@@ -6,4 +6,5 @@ namespace Backend.Interfaces;
 public interface IBookingRepository
 {
     Task<Booking> CreateBooking(BookRoomCommand command);
+    Task<Booking> CancelBooking(Guid id);
 }
