@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Enums;
 using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.MediatR.Commands.Booking;
@@ -24,6 +25,7 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
         {
             StartTime = command.StartDate,
             EndTime = command.EndDate,
+            Status = BookingStatus.Booked,
             UserId = command.UserId,
             User = command.User,
             RoomId = command.RoomId,

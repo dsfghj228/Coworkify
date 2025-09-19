@@ -34,6 +34,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbConte
             .HasOne(b => b.Room)
             .WithMany(b => b.Bookings)
             .HasForeignKey(b => b.RoomId);
+
+        modelBuilder.Entity<Booking>()
+            .Property(b => b.Status)
+            .HasConversion<string>();
         
         modelBuilder.Entity<Room>()
             .Property(r => r.HourlyRate)

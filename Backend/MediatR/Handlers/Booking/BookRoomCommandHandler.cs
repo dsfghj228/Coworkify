@@ -24,6 +24,7 @@ public class BookRoomCommandHandler(IBookingRepository bookingRepository) : IReq
             Id = booking.Id,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
+            Status = booking.Status,
             User = userForReturn,
             RoomId = request.RoomId,
             TotalPrice = request.TotalPrice
