@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Backend.Data;
 using Backend.Exceptions;
 using Backend.FluentValidation;
@@ -6,6 +7,8 @@ using Backend.Models;
 using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
+using Hangfire;
+using Hangfire.PostgreSql;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +27,11 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Запуск приложения");
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddOpenApi();
 
@@ -95,7 +102,30 @@ builder.Services.AddProblemDetails(options =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
-
+    
+    options.Map<CustomExceptions.BookingNotFoundException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.BookingCanNotBeCancelledException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    options.Map<CustomExceptions.BookingArleadyExistsException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
@@ -171,6 +201,13 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(c =>
+        c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
+
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
@@ -189,5 +226,12 @@ app.UseProblemDetails();
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
+
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<IBookingRepository>(
+    "complete-bookings",
+    i => i.CompleteBookings(),
+    Cron.Minutely);
 
 app.Run();
