@@ -69,4 +69,9 @@ public abstract class CustomExceptions : Exception
         "https://tools.ietf.org/html/rfc7231#section-6.6.1",
         "Booking не может быть отменен",
         $"Booking с id @{id} не может быть отменен так как его статус: @{status}");
+    
+    public class BookingArleadyExistsException(Guid roomId) : CustomExceptions(HttpStatusCode.Conflict,
+        "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+        "Нельзя забронировать комнату на эту дату",
+        $"Нельзя забронировать комнату с Id @{roomId} потому что в этот период времени она уже забронирована");
 }

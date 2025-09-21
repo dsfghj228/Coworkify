@@ -12,6 +12,17 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
 {
     public async Task<Booking> CreateBooking(BookRoomCommand command)
     {
+        var alreadyExistsBooking = await context.Bookings
+            .AnyAsync(b =>
+                b.RoomId == command.RoomId &&
+                b.StartTime < command.EndDate &&
+                b.EndTime > command.StartDate);
+        
+        if (alreadyExistsBooking)
+        {
+            throw new CustomExceptions.BookingArleadyExistsException(command.RoomId);
+        }
+        
         var room = await context.Rooms
             .Include(room => room.Bookings)
             .Where(r => r.Id == command.RoomId)
