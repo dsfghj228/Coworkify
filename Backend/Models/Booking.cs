@@ -1,3 +1,5 @@
+using Backend.Enums;
+
 namespace Backend.Models;
 
 public class Booking
@@ -5,6 +7,7 @@ public class Booking
     public Guid Id { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
+    public BookingStatus  Status { get; set; }
     public string UserId { get; set; }
     public AppUser User { get; set; }
     public Guid RoomId { get; set; }
