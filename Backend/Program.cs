@@ -7,6 +7,8 @@ using Backend.Models;
 using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
+using Hangfire;
+using Hangfire.PostgreSql;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -201,6 +203,12 @@ builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(c =>
+        c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -218,5 +226,12 @@ app.UseProblemDetails();
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
+
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<IBookingRepository>(
+    "complete-bookings",
+    i => i.CompleteBookings(),
+    Cron.Minutely);
 
 app.Run();

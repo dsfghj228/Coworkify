@@ -82,4 +82,19 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
 
         return bookings;
     }
+
+    public async Task CompleteBookings()
+    {
+        var bookings = await context.Bookings
+            .Where(b => b.EndTime < DateTime.UtcNow && b.Status == BookingStatus.Booked)
+            .ToListAsync();
+
+        foreach (var booking in bookings)
+        {
+            booking.Status = BookingStatus.Completed;
+        }
+        
+        context.Bookings.UpdateRange(bookings);
+        await context.SaveChangesAsync();
+    }
 }
