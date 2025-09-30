@@ -9,6 +9,12 @@ namespace Backend.Controllers;
 [ApiController]
 public class AccountController(IMediator mediator, ILogger<AccountController> logger) : ControllerBase
 {
+    /// <summary>
+    /// Контроллер регистрации новый пользователей
+    /// </summary>
+    /// <param name="registerModel">Параметры</param>
+    /// <response code="200">Новый юзер успешно зарегистрирован</response>
+    /// <response code="409">Такой пользователь уже существует</response>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterAppUser registerModel)
     {
@@ -26,7 +32,18 @@ public class AccountController(IMediator mediator, ILogger<AccountController> lo
         );
         return Ok(result);
     }
-
+    
+    /// <summary>
+    /// Контроллер входа пользователя в систему
+    /// </summary>
+    /// <param name="loginModel">Параметры</param>
+    /// <response code="200">Вход выполнен успешно</response>
+    /// <response code="404">
+    /// Возможные ошибки:
+    /// - Пользователя с таким username не существует
+    /// - Неверный пароль
+    /// </response>
+    /// <response code="409">Такой пользователь уже существует</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginAppUser loginModel)
     {

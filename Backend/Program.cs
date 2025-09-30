@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Backend.Data;
 using Backend.Exceptions;
@@ -164,6 +165,11 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Coworkify", Version = "v1" });
+    
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    
+    options.IncludeXmlComments(xmlPath);
     
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
