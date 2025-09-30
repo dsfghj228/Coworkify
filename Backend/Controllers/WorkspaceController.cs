@@ -15,6 +15,12 @@ namespace Backend.Controllers;
 [ApiController]
 public class WorkspaceController(IMediator mediator, UserManager<AppUser> userManager, ILogger<WorkspaceController> logger) : ControllerBase
 {
+    /// <summary>
+    /// Контроллер создания рабочего пространства
+    /// </summary>
+    /// <param name="workspace">Параметры</param>
+    /// <response code="200">Успешное создание</response>
+    /// <response code="401">Ошибка авторизации</response>
     [HttpPost("create")]
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateWorkspace workspace)
@@ -39,6 +45,10 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
         return Ok(result);
     }
     
+    /// <summary>
+    /// Контроллер получения всех достпуных рабочих пространств
+    /// </summary>
+    /// <response code="200">Успешное получение</response>
     [HttpGet]
     public async Task<IActionResult> GetAllWorkspaces()
     {
@@ -47,7 +57,13 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
         logger.LogInformation("Успешное получение всех workspaces");
         return Ok(result);
     }
-
+    
+    /// <summary>
+    /// Контроллер для получения рабочего пространства по Id
+    /// </summary>
+    /// <param name="id">Параметры</param>
+    /// <response code="200">Успешное получение рабочего пространства по Id</response>
+    /// <response code="404">Рабочее пространство с таким id не найдена</response>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWorkspaceById([FromRoute] Guid id)
     {
@@ -59,7 +75,13 @@ public class WorkspaceController(IMediator mediator, UserManager<AppUser> userMa
         logger.LogInformation("Workspace c id {Id} успешно найден", id);
         return Ok(result);
     }
-
+    
+    /// <summary>
+    /// Контроллер для удаления рабочего простанства
+    /// </summary>
+    /// <param name="id">Параметры</param>
+    /// <response code="200">Успешное удаление пространства</response>
+    /// <response code="404">Рабочее пространство с таким id не найдена</response>
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteWorkspace([FromRoute] Guid id)
