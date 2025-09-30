@@ -38,7 +38,7 @@ public class AccountController(IMediator mediator, ILogger<AccountController> lo
     /// </summary>
     /// <param name="loginModel">Параметры</param>
     /// <response code="200">Вход выполнен успешно</response>
-    /// <response code="404">
+    /// <response code="401">
     /// Возможные ошибки:
     /// - Пользователя с таким username не существует
     /// - Неверный пароль

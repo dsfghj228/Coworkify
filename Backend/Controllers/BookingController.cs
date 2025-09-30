@@ -15,6 +15,14 @@ namespace Backend.Controllers;
 [ApiController]
 public class BookingController(UserManager<AppUser> userManager, IMediator mediator, ILogger<BookingController> logger) : ControllerBase
 {
+    /// <summary>
+    /// Контроллер для бронирования комнаты
+    /// </summary>
+    /// <param name="newBooking">Параметры</param>
+    /// <response code="200">Успешное бронирование</response>
+    /// <response code="401">Ошибка авторизации</response>
+    /// <response code="404">Комната не найдена</response>
+    /// <response code="409">Нельзя забронировать комнату на эту дату</response>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> BookRoom([FromBody] CreateBooking newBooking)
@@ -39,7 +47,15 @@ public class BookingController(UserManager<AppUser> userManager, IMediator media
         logger.LogInformation("Успешное бронирование комнаты с Id {@Id} на период с {@StartDate} по {@EndDate}", userId, newBooking.StartDate, newBooking.EndDate);
         return Ok(result);
     }
-
+    
+    /// <summary>
+    /// Контроллер для отмены бронирования комнаты
+    /// </summary>
+    /// <param name="id">Параметры</param>
+    /// <response code="200">Успешная отмена бронирования</response>
+    /// <response code="401">Ошибка авторизации</response>
+    /// <response code="404">Бронирование с таким id не найдена</response>
+    /// <response code="409">Нельзя отменить бронирование</response>
     [HttpPut("cancel/{id}")]
     [Authorize]
     public async Task<IActionResult> CancelBooking([FromRoute] Guid id)
@@ -52,7 +68,12 @@ public class BookingController(UserManager<AppUser> userManager, IMediator media
         logger.LogInformation("Успешная отмена брони с id: {@Id}", id);
         return Ok(result);
     }
-
+    
+    /// <summary>
+    /// Контроллер для получения бронирований пользователя
+    /// </summary>
+    /// <response code="200">Успешное получение всех бронирований</response>
+    /// <response code="401">Ошибка авторизации</response>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetUserBookings()
