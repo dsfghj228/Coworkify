@@ -5,6 +5,7 @@ using Backend.Exceptions;
 using Backend.FluentValidation;
 using Backend.Interfaces;
 using Backend.Models;
+using Backend.RabbitMq;
 using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
@@ -220,7 +221,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
+    
+    var rabbitMqInitializer = new RabbitMqInitializer(builder.Configuration);
+    rabbitMqInitializer.Initialize();
 }
 
 if(true) //(app.Environment.IsDevelopment())
