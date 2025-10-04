@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;
 
-public class WorkspaceRepository(ApplicationDbContext context) : IWorkspaceRepository
+public class WorkspaceRepository(ApplicationDbContext context, IWorkspaceProducer producer) : IWorkspaceRepository
 {
 
     public async Task CreateWorkspace(Workspace workspace)
@@ -47,6 +47,15 @@ public class WorkspaceRepository(ApplicationDbContext context) : IWorkspaceRepos
 
         context.Remove(workspace);
         await context.SaveChangesAsync();
+        
+        var workspaceEvent = new
+        {
+            eventId = Guid.NewGuid(),
+            workspaceId = id,
+            occurredAr = DateTime.UtcNow
+        };
+        producer.WorkspaceDeleteProducer(workspaceEvent);
+        
         return workspace;
     }
 }

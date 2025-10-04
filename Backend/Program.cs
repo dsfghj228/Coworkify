@@ -6,6 +6,7 @@ using Backend.FluentValidation;
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.RabbitMq;
+using Backend.RabbitMq.Producers;
 using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
@@ -209,6 +210,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IWorkspaceProducer, WorkspaceProducer>();
 
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c =>
