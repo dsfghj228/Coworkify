@@ -2,6 +2,7 @@ using Backend.Data;
 using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
+using Backend.RabbitMq.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;
@@ -48,11 +49,12 @@ public class WorkspaceRepository(ApplicationDbContext context, IWorkspaceProduce
         context.Remove(workspace);
         await context.SaveChangesAsync();
         
-        var workspaceEvent = new
+        var workspaceEvent = new WorkspaceEvent
         {
-            eventId = Guid.NewGuid(),
-            workspaceId = id,
-            occurredAr = DateTime.UtcNow
+            EventId = Guid.NewGuid(),
+            Type = "workspace.deleted",
+            WorkspaceId = id,
+            OccurredAt = DateTime.UtcNow
         };
         producer.WorkspaceDeleteProducer(workspaceEvent);
         
