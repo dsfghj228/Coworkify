@@ -5,6 +5,9 @@ using Backend.Exceptions;
 using Backend.FluentValidation;
 using Backend.Interfaces;
 using Backend.Models;
+using Backend.RabbitMq;
+using Backend.RabbitMq.Consumers;
+using Backend.RabbitMq.Producers;
 using Backend.Repository;
 using Backend.Services;
 using FluentValidation;
@@ -208,6 +211,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IWorkspaceProducer, WorkspaceProducer>();
+
+builder.Services.AddHostedService<RoomConsumer>();
 
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c =>
@@ -217,7 +223,16 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+    
+    var rabbitMqInitializer = new RabbitMqInitializer(builder.Configuration);
+    rabbitMqInitializer.Initialize();
+}
+
+if(true) //(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options => options.SwaggerEndpoint("v1/swagger.json", "Coworkify V1"));
