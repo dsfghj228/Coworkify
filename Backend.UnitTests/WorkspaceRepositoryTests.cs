@@ -3,7 +3,6 @@ using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.RabbitMq.Events;
-using Backend.RabbitMq.Producers;
 using Backend.Repository;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -11,15 +10,15 @@ using Moq;
 namespace Backend.UnitTests;
 
 [TestFixture]
-public class WorkspaceRepositoryTests()
+public class WorkspaceRepositoryTests
 {
     private DbContextOptions<ApplicationDbContext> _dbOptions;
     private static readonly Guid WorkspaceId1 = Guid.Parse("fb0cd5d2-1385-4408-9677-a8e0058b0240");
-    [OneTimeSetUp]
-    public void OneTimeSetup()
+    [SetUp]
+    public void Setup()
     {
         _dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase("WorkspaceTestsDB")
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         using var context = new ApplicationDbContext(_dbOptions);
         
@@ -78,7 +77,7 @@ public class WorkspaceRepositoryTests()
     }
     
     [Test]
-    public async Task GetWorkspaceById_WhenWorkspaceDoesNotExists_ShouldReturnNotFoundException()
+    public async Task GetWorkspaceById_WhenWorkspaceDoesNotExists_ShouldThrowNotFoundException()
     {
         await using var context = new ApplicationDbContext(_dbOptions);
         var mockProducer = new Mock<IWorkspaceProducer>();
@@ -112,7 +111,7 @@ public class WorkspaceRepositoryTests()
     }
     
     [Test]
-    public async Task DeleteWorkspace_WhenWorkspaceDoesNotExist_ShouldReturnNotFoundException()
+    public async Task DeleteWorkspace_WhenWorkspaceDoesNotExist_ShouldThrowNotFoundException()
     {
         await using var context = new ApplicationDbContext(_dbOptions);
         var mockProducer = new Mock<IWorkspaceProducer>();
