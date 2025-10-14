@@ -58,7 +58,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
                 ["RabbitMQ:Port"] = rabbitMqPort.ToString(),
                 ["RabbitMQ:UserName"] = "guest",
                 ["RabbitMQ:Password"] = "guest",
-                ["RabbitMQ:HostAndPort"] = rabbitHostAndPort
+                ["RabbitMQ:HostAndPort"] = rabbitHostAndPort,
+                ["JWT:SigningKey"] = "fkldjsklafiojriuhfkhrkanfioueujhroj",
+                ["JWT:Issuer"] = "http://localhost:7168",
+                ["JWT:Audience"] = "http://localhost:7168"
             };
             
             config.AddInMemoryCollection(inMemorySettings);
