@@ -1,6 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using Backend.Data;
 using Backend.Dto.WorkspaceDto;
+using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
@@ -8,12 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.IntegrationTests;
 
+[Collection("Sequential")]
 public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
 {
     private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
     private AppUser _testUser;
     private string _token;
+    private readonly Guid workspaceId;
 
     public WorkspaceControllerTests(CustomWebApplicationFactory factory)
     {
@@ -31,8 +36,13 @@ public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactor
 
     public async Task DisposeAsync()
     {
+        using var scope = _factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        context.Workspaces.RemoveRange(context.Workspaces);
+        context.Users.RemoveRange(context.Users);
+        await context.SaveChangesAsync();
         _client.Dispose();
-        await _factory.DisposeAsync();
     }
     
     private async Task<(AppUser user, string token)> CreateTestUserAsync()
@@ -71,7 +81,7 @@ public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactor
     }
 
     [Fact]
-    public async Task CreateWorkspace_ShouldReturnNewWorkspace()
+    public async Task CreateWorkspace_WhenAuthorized_ShouldReturnNewWorkspace()
     {
         _client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
@@ -81,4 +91,36 @@ public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactor
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(content);
     }
+
+    [Fact]
+    public async Task CreateWorkspace_WhenNotAuthorized_ShouldThrowUnauthorizedException()
+    {
+        var workspace = new CreateWorkspace
+        {
+            Name = "TestWorkspace",
+            Description = $"Description for TestWorkspace",
+            Address = "TestAddress"
+        };
+        _client.DefaultRequestHeaders.Authorization = null;
+        
+        var response = await _client.PostAsJsonAsync("api/workspace/create", workspace);
+        
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAllWorkspaces_ShouldReturnAllExistingWorkspaces()
+    {
+        var response = await _client.GetAsync("/api/workspace");
+        var content = await response.Content.ReadAsStringAsync();
+        var workspaces = await response.Content.ReadFromJsonAsync<List<Workspace>>();
+        
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(content);
+        Assert.NotNull(workspaces);
+        Assert.Equal(2, workspaces.Count);
+    }
 }
+
+[CollectionDefinition("Sequential", DisableParallelization = true)]
+public class SequentialCollectionDefinition { }
