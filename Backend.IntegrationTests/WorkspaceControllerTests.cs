@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using Backend.Data;
 using Backend.Dto.WorkspaceDto;
-using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
@@ -11,14 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.IntegrationTests;
 
-[Collection("Sequential")]
+[Collection("SequentialWorkspace")]
 public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
 {
     private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
     private AppUser _testUser;
     private string _token;
-    private readonly Guid workspaceId;
 
     public WorkspaceControllerTests(CustomWebApplicationFactory factory)
     {
@@ -122,5 +119,5 @@ public class WorkspaceControllerTests : IClassFixture<CustomWebApplicationFactor
     }
 }
 
-[CollectionDefinition("Sequential", DisableParallelization = true)]
-public class SequentialCollectionDefinition { }
+[CollectionDefinition("SequentialWorkspace", DisableParallelization = true)]
+public class SequentialWorkspaceCollectionDefinition { }
