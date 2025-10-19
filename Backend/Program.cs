@@ -256,3 +256,5 @@ RecurringJob.AddOrUpdate<IBookingRepository>(
     Cron.Minutely);
 
 app.Run();
+
+public partial class Program;
