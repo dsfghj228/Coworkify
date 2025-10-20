@@ -16,12 +16,12 @@ jobs:
 
       - name: Install .NET 9 SDK manually
         run: |
-          wget https://download.visualstudio.microsoft.com/download/pr/27b2c96a-3a59-41bb-8895-9c46a934a958/0b61e8f9d11dbbcd19d642bf4228f4ce/dotnet-sdk-9.0.100-preview.7.24406.23-linux-x64.tar.gz
+          wget https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-linux-x64.tar.gz
           mkdir -p $HOME/dotnet
-          tar -zxf dotnet-sdk-9.0.100-preview.7.24406.23-linux-x64.tar.gz -C $HOME/dotnet
+          tar -zxf dotnet-sdk-9.0.306-linux-x64.tar.gz -C $HOME/dotnet
           echo "DOTNET_ROOT=$HOME/dotnet" >> $GITHUB_ENV
           echo "$HOME/dotnet" >> $GITHUB_PATH
-
+      
       - name: Verify .NET version
         run: dotnet --info
 
