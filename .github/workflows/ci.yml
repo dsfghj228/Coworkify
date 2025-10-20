@@ -11,19 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
+      - name: Install .NET 9 SDK manually
+        run: |
+          wget https://download.visualstudio.microsoft.com/download/pr/27b2c96a-3a59-41bb-8895-9c46a934a958/0b61e8f9d11dbbcd19d642bf4228f4ce/dotnet-sdk-9.0.100-preview.7.24406.23-linux-x64.tar.gz
+          mkdir -p $HOME/dotnet
+          tar -zxf dotnet-sdk-9.0.100-preview.7.24406.23-linux-x64.tar.gz -C $HOME/dotnet
+          echo "DOTNET_ROOT=$HOME/dotnet" >> $GITHUB_ENV
+          echo "$HOME/dotnet" >> $GITHUB_PATH
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Verify .NET version
+        run: dotnet --info
 
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
